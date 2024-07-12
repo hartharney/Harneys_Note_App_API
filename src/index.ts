@@ -41,7 +41,7 @@ const context = async ({ req, res }: { req: UserRequest; res: Response }) => {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-//   context,
+  context,
 });
 
 const startServer = async () => {
@@ -54,7 +54,6 @@ const startServer = async () => {
     })
     );
     app.use(express.json());
-    // app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
     app.use(cors({ origin: '*', credentials: true }));
     app.use(passport.initialize());
     app.use(passport.session());

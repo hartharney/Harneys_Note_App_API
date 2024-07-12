@@ -20,14 +20,14 @@ class Validate {
         }),
         password: Joi.string()
             .trim()
-            .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#_!*%$])[a-zA-Z0-9@#_!*%$]{3,18}$/)
+            .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).{3,18}$/)
             .required()
             .messages({
                 "string.base": "Password should be a string",
                 "string.empty": "Password is required",
-                "string.pattern.base": "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@#_!*%$)",
+                "string.pattern.base": "Password must contain at least one lowercase letter, one uppercase letter, and one number",
                 "any.required": "Password is required",
-        }),
+            }),
         confirmPassword: Joi.string().equal(Joi.ref("password")).required().label("Confirm password").messages({
             "any.only": "Passwords do not match",
             "any.required": "Confirm password is required",

@@ -5,7 +5,6 @@ import {
   bcryptDecode,
   generateToken,
 } from '../utils/utils';
-import { registerUserInput } from '../API/interfaces';
 import * as Validate from '../utils/validators';
 import { AuthenticationError } from 'apollo-server-express';
 import  UserModel,{ User } from '../firebase/models/User';
@@ -88,7 +87,7 @@ const resolvers: any = {
     }
   },
   Mutation: {
-    registerUser: async (_: any, { input }: { input: registerUserInput }) => {
+    registerUser: async (_: any, { input }: { input: any }) => {
       try {
         const validate = Validate.default.registerUserSchema.validate(input, option);
 

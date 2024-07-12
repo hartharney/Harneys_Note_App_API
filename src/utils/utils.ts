@@ -1,5 +1,4 @@
 import bcryptjs, { genSalt } from "bcryptjs";
-import Joi from "joi";
 import Jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
