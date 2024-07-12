@@ -18,24 +18,28 @@ const { PORT, SESSION_SECRET } = process.env;
 console.log(`PORT: ${PORT}`);
 
 const context = async ({ req, res }: { req: UserRequest; res: Response }) => {
-  const currentPath = req.headers['x-current-path'] as string;
-  const shouldApplyMiddleware = currentPath !== '/register' && currentPath !== '/login';
+  try {
+    const auth = req.headers.authorization;
 
-
-  if (shouldApplyMiddleware) {
-    await new Promise<void>((resolve, reject) => {
-      authenticateMiddleware(req, res, (err: any) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
+    if (auth) {
+      await new Promise<void>((resolve, reject) => {
+        authenticateMiddleware(req, res, (err: any) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
       });
-    });
-  }
+    }
 
-  const user = req.user;
-  return { user, req, res };
+    const user = req.user; 
+
+    return { user, req, res };
+  } catch (error) {
+    console.error('Error in context function:', error);
+    throw new Error('Failed to set context');
+  }
 };
 
 const server = new ApolloServer({

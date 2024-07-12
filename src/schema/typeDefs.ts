@@ -7,6 +7,7 @@ const typeDefs = gql`
         getNotes: [Note]
         getNoteById(id: String!): Note
         getNoteUsers(noteId: String!): [User]
+        getNoteByUser(userId: String!): [Note]
 
     }
 

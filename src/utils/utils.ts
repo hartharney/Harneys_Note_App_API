@@ -6,9 +6,10 @@ dotenv.config();
 // generate token
 export const generateToken = async (email: string, id: string) => {
   return Jwt.sign({ email, id }, process.env.JWT_SECRET as string, {
-    expiresIn: "3d",
+    expiresIn: "15m", 
   });
 };
+
 
 // validate token
 export const verify = async (token: string) => {

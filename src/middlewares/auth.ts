@@ -6,34 +6,27 @@ import { Request, Response, NextFunction } from 'express';
 import UserRequest from '../types/type';
 
 const authenticateMiddleware = async (req: UserRequest, res: Response, next: NextFunction) => {
-    try {
-        const auth = req.headers.authorization;
+     try {
+    const auth = req.headers.authorization;
 
-        if (!auth) {
-            throw new AuthenticationError('Unauthorized, no token provided');
-        }
+    if (auth) {
+      const token = auth.split(' ')[1];
+      const verified = Jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
 
-        const token = auth.split(' ')[1];
-        const verified = Jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-
-        if (!verified) {
-            throw new AuthenticationError('Unauthorized');
-        }
-
+      if (verified) {
         const { id } = verified;
         const user = await UserModel.findById(id);
 
-        if (!user) {
-            throw new AuthenticationError('Unauthorized');
+        if (user) {
+          req.user = user; 
         }
-
-        req.user = user;
-        console.log("req.user", req.user);
-        next();
-    } catch (error) {
-        console.error('Authentication error:', error);
-        throw new AuthenticationError('Failed to authenticate');
+      }
     }
+  } catch (error) {
+    console.error('Authentication error:', error);
+  }
+
+  next ()
 };
 
 export default authenticateMiddleware;

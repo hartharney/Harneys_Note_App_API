@@ -84,6 +84,21 @@ const resolvers: any = {
             console.error('Error retrieving note users:', error);
             throw new AuthenticationError('Failed to retrieve note users');
         }
+    },
+        getNoteByUser : async (_: any, { userId }: any, context: any) => {
+        try {
+        if (!context.user) {
+            throw new Error('Not Authenticated');
+        }
+
+        const notes = await NoteModel.findAll();
+        const userNotes = notes.filter(note => note.owner.id === userId || note.sharedUsers.some(u => u.id === userId));
+
+        return userNotes;
+        } catch (error) {
+        console.error('Error retrieving user notes:', error);
+        throw new AuthenticationError('Failed to retrieve user notes');
+        }
     }
   },
   Mutation: {
@@ -258,6 +273,7 @@ const resolvers: any = {
     },
   addNote: async (_: any, { input }: any, context: any) => {
     try {
+
       if (!context.user) {
         throw new Error('Not Authenticated');
       }
@@ -266,7 +282,7 @@ const resolvers: any = {
         id: uuidv4(),
         title: input.title,
         content: input.content,
-        owner: context.user.id,
+        owner: context.user,
         sharedUsers : input.sharedUsers || [],
       };
 
