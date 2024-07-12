@@ -91,10 +91,19 @@ const resolvers: any = {
             throw new Error('Not Authenticated');
         }
 
-        const notes = await NoteModel.findAll();
-        const userNotes = notes.filter(note => note.owner.id === userId || note.sharedUsers.some(u => u.id === userId));
 
-        return userNotes;
+        const notes = await NoteModel.findAll();
+        const userNotes = notes.filter(note => note.owner.id === context.user.id || note.sharedUsers.some(u => u.id === context.user.id));
+
+        const userNotesArray = userNotes.map(note => {
+            return {
+            ...note,
+            owner: context.user,
+            sharedUsers: note.sharedUsers.map(u => UserModel.findById(u.id)),
+            };
+        }
+        );
+        return userNotesArray;
         } catch (error) {
         console.error('Error retrieving user notes:', error);
         throw new AuthenticationError('Failed to retrieve user notes');
@@ -294,13 +303,13 @@ const resolvers: any = {
       throw new AuthenticationError('Failed to create note');
     }
   },
-    updateNote: async (_: any, { id, input }: any, context: any) => {
+    updateNote: async (_: any, { input }: any, context: any) => {
         try {
         if (!context.user) {
             throw new Error('Not Authenticated');
         }
     
-        const note = await NoteModel.findById(id);
+        const note = await NoteModel.findById(input.id);
         if (!note) {
             throw new AuthenticationError('Note not found');
         }
@@ -311,8 +320,8 @@ const resolvers: any = {
             content: input.content,
         };
 
-        await NoteModel.update(id, updatedNote);
-
+        await NoteModel.update(input.id, updatedNote);
+        
         return updatedNote;
         } catch (error) {
         console.error('Error updating note:', error);
@@ -331,7 +340,6 @@ const resolvers: any = {
         }
     
         await NoteModel.delete(id);
-    
         return note;
         } catch (error) {
         console.error('Error deleting note:', error);

@@ -7,7 +7,7 @@ const typeDefs = gql`
         getNotes: [Note]
         getNoteById(id: String!): Note
         getNoteUsers(noteId: String!): [User]
-        getNoteByUser(userId: String!): [Note]
+        getNoteByUser: [Note]
 
     }
 
@@ -45,6 +45,7 @@ const typeDefs = gql`
     }
 
     input updateNoteInput {
+        id: String
         title: String
         content: String
     }
@@ -78,8 +79,8 @@ const typeDefs = gql`
         resetPassword(otp: String!, newPassword: String!, confirmNewPassword: String!): Boolean
         logout: Boolean
         addNote(input: addNoteInput): Note
-        updateNote(id: String!, input: updateNoteInput): Note
-        deleteNote: Note
+        updateNote(input: updateNoteInput): Note
+        deleteNote(id : ID!): Note
         shareNote: Note
         unshareNote: Note
         addUserToNote(noteId: String!, userId: String!): Note

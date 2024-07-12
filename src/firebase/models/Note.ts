@@ -1,5 +1,5 @@
 
-import { getDoc, doc, setDoc, getFirestore, query, where, collection, getDocs, updateDoc } from 'firebase/firestore';
+import { getDoc, doc, setDoc, getFirestore, query, where, collection, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import {firestore} from '../firebase';
 import { User } from './User';
 
@@ -48,8 +48,8 @@ class NoteModel {
         const noteRef = doc(firestore, 'notes', id);
         const noteDoc = await getDoc(noteRef);
         if (noteDoc.exists()) {
-        await setDoc(noteRef, { ...noteDoc.data(), deleted: true });
-        return { id: noteDoc.id, ...noteDoc.data() } as Note;
+            await deleteDoc(noteRef);
+            return { id: noteDoc.id, ...noteDoc.data() } as Note;
         }
         return null;
     }
